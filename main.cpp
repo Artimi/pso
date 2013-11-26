@@ -1,12 +1,18 @@
 #include <iostream>
+#include "Pso.hpp"
+#include "Testbed.hpp"
 #include "MathVector.hpp"
+#include "Parameters.hpp"
 
 int main(void)
 {
-	MathVector v{3.0, 3.2};
-	MathVector v1{6.0, 6.4};
-	std::cout << v + v1 << std::endl;
-	std::cout << v * v1 << std::endl;
-	std::cout << v * 10.0 << " = " << 10.0 * v << std::endl;
-	return 0;
+	std::vector<double> dmin{-1.0, -1.0};
+	std::vector<double> dmax{1.0, 1.0};
+	DimensionLimits dims;
+	dims.min = dmin;
+	dims.max = dmax;
+
+	Parameters p;
+	PSO pso(&sphereFunction, dims, p);
+	pso.addLbestNeighbours();
 }
