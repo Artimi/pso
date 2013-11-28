@@ -1,7 +1,9 @@
 #include <random>
+#include <chrono>
 #include "MathVector.hpp"
 
-std::default_random_engine generator;
+unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
+std::default_random_engine generator (seed);
 std::uniform_real_distribution<double> distribution(0,1);
 
 double randDouble(double min, double max)

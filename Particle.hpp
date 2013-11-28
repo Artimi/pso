@@ -23,8 +23,6 @@ struct Particle
 	Particles neighbours;
 	double (*func)(MathVector);
 	Parameters parameters;
-	double w;
-	double c;
 
 	Particle(int id, DimensionLimits d, double (*f)(MathVector),
 		Parameters params):
@@ -33,6 +31,8 @@ struct Particle
 		x.randomVector(d);
 		v.randomVector(d);
 		p = x;
+		x_fitness = func(x);
+		p_fitness = x_fitness;
 	};
 
 	void addSampleNeighbours(Particles); 
@@ -42,3 +42,5 @@ struct Particle
 	void checkBoundary();
 	void updateBest();
 };
+
+std::ostream &operator<<(std::ostream &out, Particle p);

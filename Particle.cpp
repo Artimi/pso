@@ -12,10 +12,10 @@ void Particle::addSampleNeighbours(Particles particles)
 	
 void Particle::updateVelocity()
 {
-	if (best->p_fitness > p_fitness)
-		v = w * v + randDouble(0.0, c) * (p - x) + randDouble(0.0, c) * (best->p - x);
+	if (best->p_fitness < p_fitness)
+		v = parameters.w * v + randDouble(0.0, parameters.c) * (p - x) + randDouble(0.0, parameters.c) * (best->p - x);
 	else
-		v = w * v + randDouble(0.0, c) * (p - x);
+		v = parameters.w * v + randDouble(0.0, parameters.c) * (p - x);
 }
 
 void Particle::updatePosition()
@@ -23,7 +23,7 @@ void Particle::updatePosition()
 	x = x + v;
 	checkBoundary();
 	x_fitness = func(x);
-	if (x_fitness > p_fitness)
+	if (x_fitness < p_fitness)
 	{
 		p = x;
 		p_fitness = x_fitness;
@@ -52,6 +52,15 @@ void Particle::updateBest()
 	for(auto particle: neighbours)
 	{
 		if(particle->x_fitness < min)
+		{
 			best = particle;
+			min = particle->x_fitness;
+		}
 	}
+}
+
+std::ostream &operator<<(std::ostream &out, Particle p)
+{
+    out << p.id << "#\tx = " << p.x << ",\tv = " << p.v << ",\tbest = " << p.best->id << std::endl;
+    return out;
 }

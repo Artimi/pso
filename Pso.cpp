@@ -68,7 +68,6 @@ Particle::ParticlePtr PSO::getBestParticle()
             min = particle->x_fitness;
         }
     }
-    std::cout << bestParticle->id << std::endl;
     return bestParticle;
 }
 
@@ -78,7 +77,9 @@ Result PSO::fmin()
     while(not result.success and result.iterations <= parameters.max_iterations)
     {
         for(auto particle: population)
+        {
             particle->updateBest();
+        }
         for(auto particle: population)
         {
             particle->updateVelocity();
