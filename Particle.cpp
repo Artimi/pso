@@ -1,10 +1,13 @@
 #include <limits>
+#include <algorithm>
 #include "Particle.hpp"
 
 
-void Particle::addSampleNeighbours(Particles particles, int count)
+void Particle::addSampleNeighbours(Particles particles)
 {
-	return;
+	neighbours = particles;
+    std::random_shuffle(neighbours.begin(), neighbours.end());
+    neighbours.erase(neighbours.begin() + parameters.dynamic_neighbours, neighbours.end());
 }
 	
 void Particle::updateVelocity()

@@ -35,7 +35,7 @@ struct Particle
 		p = x;
 	};
 
-	void addSampleNeighbours(Particles particles, int count); 
+	void addSampleNeighbours(Particles); 
 	
 	void updateVelocity();
 	void updatePosition();

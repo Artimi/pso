@@ -8,7 +8,12 @@ struct Result
 	int iterations;
 	bool success;
 	Particle::ParticlePtr best;
+
+    Result(): iterations(0), success(false) {};
+
 };
+
+std::ostream &operator<<(std::ostream &out, Result r);
 
 struct PSO
 {
@@ -25,13 +30,20 @@ struct PSO
 	{
 		dimension = dims.min.size();
 		pop_size = 20 + 2 *  dimension; //should be sqrt
+		// pop_size =4;
+        generatePopulation();
+        if(parameters.gbest)
+            addGbestNeighbours();
+        else if (parameters.lbest > 0)
+            addLbestNeighbours();
+        else if (parameters.dynamic)
+            addSampleNeighbours();
 	};	
 
 	void generatePopulation();
 	void addSampleNeighbours();
 	void addLbestNeighbours();
 	void addGbestNeighbours();
-
+	Particle::ParticlePtr getBestParticle();
 	Result fmin();
-
 };

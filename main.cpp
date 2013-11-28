@@ -14,5 +14,6 @@ int main(void)
 
 	Parameters p;
 	PSO pso(&sphereFunction, dims, p);
-	pso.addLbestNeighbours();
+	Result r = pso.fmin();
+	std::cout << r << std::endl;
 }
