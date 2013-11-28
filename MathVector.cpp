@@ -18,6 +18,13 @@ void MathVector::randomVector(DimensionLimits d)
 		vector.push_back(randDouble(d.min[i], d.max[i]));
 }
 
+void MathVector::fillValues(unsigned dimension, double value)
+{
+	vector.clear();
+	for (unsigned i = 0; i < dimension; i++)
+		vector.push_back(value);
+}
+
 std::ostream &operator<<(std::ostream &out, MathVector m)
 {
     out << "[ ";

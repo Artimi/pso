@@ -32,6 +32,7 @@ struct MathVector
     MathVector(std::initializer_list<double> l):vector(l){};
 
     void randomVector(DimensionLimits);
+    void fillValues(unsigned dimension, double value);
     int size() const
     {
         return vector.size();

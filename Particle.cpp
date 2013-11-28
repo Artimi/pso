@@ -12,10 +12,22 @@ void Particle::addSampleNeighbours(Particles particles)
 	
 void Particle::updateVelocity()
 {
-	if (best->p_fitness < p_fitness)
-		v = parameters.w * v + randDouble(0.0, parameters.c) * (p - x) + randDouble(0.0, parameters.c) * (best->p - x);
+	if (parameters.fips)
+	{
+		MathVector influence;
+		influence.fillValues(v.size(), 0.0);
+		for(auto n: neighbours)
+			influence = influence + randDouble(0.0, parameters.c) * (n->p - x);
+		influence = (1.0 / neighbours.size()) * influence;
+		v = parameters.w * v + influence;
+	}
 	else
-		v = parameters.w * v + randDouble(0.0, parameters.c) * (p - x);
+	{
+		if (best->p_fitness < p_fitness)
+			v = parameters.w * v + randDouble(0.0, parameters.c) * (p - x) + randDouble(0.0, parameters.c) * (best->p - x);
+		else
+			v = parameters.w * v + randDouble(0.0, parameters.c) * (p - x);
+	}
 }
 
 void Particle::updatePosition()

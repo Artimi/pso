@@ -107,7 +107,6 @@ Result PSO::fmin()
         {
         	addSampleNeighbours();
         }
-
     }
 	return result;
 }
