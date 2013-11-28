@@ -63,7 +63,7 @@ Parameters parse(int argc, char * argv[])
     //turn off getopt error message
     while(iarg != -1)
     {
-    	iarg = getopt_long(argc, argv, "w:c:i:I:n:fgl:p:h", longopts, &index);
+    	iarg = getopt_long(argc, argv, "w:c:i:d:I:n:fgl:p:h", longopts, &index);
 
     	switch (iarg)
     	{
