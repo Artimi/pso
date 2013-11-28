@@ -29,8 +29,7 @@ struct PSO
 	 parameters(params)
 	{
 		dimension = dims.min.size();
-		// pop_size = 20 + 2 *  dimension; //should be sqrt
-		pop_size =4;
+		pop_size = 20 + 2 *  dimension; //should be sqrt
         generatePopulation();
         if(parameters.gbest)
             addGbestNeighbours();
