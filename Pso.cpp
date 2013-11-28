@@ -85,6 +85,69 @@ Particle::ParticlePtr PSO::getBestParticle()
     return bestParticle;
 }
 
+void PSO::headerToFile()
+{
+	file << "{\"states\": [";
+}
+
+void PSO::footerToFile()
+{
+	file << std::endl <<"]}" << std::endl;
+}
+
+void PSO::recordState(Result state)
+{
+	bool comma, pop_comma;
+	if (state.iterations != 1)
+		file << ", ";
+	file << std::endl << "{\"iteration\": " << state.iterations
+	<< ","<< std::endl <<"\"best_x\" : [";
+	comma = false;
+	for (auto i: state.best->x.vector)
+	{
+		if(comma)
+			file << ", ";
+		file << i;
+		comma = true;
+	}
+	file << "], " << std::endl
+		<< "\"best_fitness\": " << state.best->x_fitness << "," << std::endl 
+		<< "\"particles\": [" << std::endl;
+	pop_comma = false;
+	for(auto p: population)
+	{
+		if (pop_comma)
+			file <<", " << std::endl;
+		pop_comma = true;
+		file << "    { \"id\": "<< p->id << ", ";
+
+		file<< "\"x\": [";
+		comma = false;
+		for(auto i: p->x.vector)
+		{
+			if(comma)
+				file << ", ";
+			file << i;
+			comma = true;
+		}
+		file << "], ";
+
+		file<< "\"v\": [";
+		comma = false;
+		for(auto i: p->v.vector)
+		{
+			if(comma)
+				file << ", ";
+			file << i;
+			comma = true;
+		}
+		file << "]";
+		file << ", \"x_fitness\" :" << p->x_fitness;
+		file << "}";
+	}
+	file << "]}";
+}
+
 Result PSO::fmin()
 {
 	Result result;
@@ -107,6 +170,8 @@ Result PSO::fmin()
         {
         	addSampleNeighbours();
         }
+        if(parameters.file != "")
+        	recordState(result);
     }
 	return result;
 }

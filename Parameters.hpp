@@ -14,9 +14,10 @@ struct Parameters
 	bool gbest;
 	int lbest;
 	std::string problem;
+	std::string file;
 
 	Parameters(): w(0.721), c(1.193), max_iterations(1000), dimension(2), dynamic(false), dynamic_iterations(5), dynamic_neighbours(5), fips(false), gbest(false), lbest(0), 
-		problem("test") {};
+		problem("test"), file("") {};
 };
 
 Parameters parse(int argc, char * argv[]);

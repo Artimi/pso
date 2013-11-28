@@ -15,7 +15,8 @@ std::ostream &operator<<(std::ostream &out, Parameters p)
 		<< "fips: " << p.fips << std::endl
 		<< "gbest: " << p.gbest << std::endl
 		<< "lbest: " << p.lbest << std::endl
-		<< "problem: " << p.problem << std::endl;
+		<< "problem: " << p.problem << std::endl
+		<< "file: " << p.file << std::endl;
 	return out;
 }
 
@@ -28,7 +29,8 @@ void printHelp()
 	<< "-i, --max-iterations\t\tupper limit for iterations" << std::endl
 	<< "-d, --dimension\t\t\tset dimension of the problem" << std::endl
 	<< "-p, --problem\t\t\tproblem to solve: sphere, rosenbrock, rastrigin, test" << std::endl
-	<< "-f, --fips\t\t\tuse Fully Informed Particle Swarm" << std::endl
+	<< "-f, --file\t\t\trecord computing to file, JSON format" << std::endl
+	<< "-F, --fips\t\t\tuse Fully Informed Particle Swarm" << std::endl
 	<< "-h, --help\t\t\tshow this help" << std::endl
 	<< std::endl
 	<< "Topology settings:" << std::endl
@@ -49,7 +51,8 @@ Parameters parse(int argc, char * argv[])
     {"dimension", required_argument, 0, 'd'},
     {"dynamic-iterations", required_argument, 0, 'I'},
     {"dynamic-neighbours", required_argument, 0, 'n'},
-    {"fips", no_argument, 0, 'f'},
+    {"file", required_argument, 0, 'f'},
+    {"fips", no_argument, 0, 'F'},
     {"gbest", no_argument, 0, 'g'},
     {"lbest", required_argument, 0, 'l'},
     {"problem", required_argument, 0, 'p'},
@@ -62,7 +65,7 @@ Parameters parse(int argc, char * argv[])
 
     while(iarg != -1)
     {
-    	iarg = getopt_long(argc, argv, "w:c:i:d:I:n:fgl:p:h", longopts, &index);
+    	iarg = getopt_long(argc, argv, "w:c:i:d:I:n:f:F:gl:p:h", longopts, &index);
 
     	switch (iarg)
     	{
@@ -86,7 +89,10 @@ Parameters parse(int argc, char * argv[])
     			parameters.dynamic_neighbours = std::stoi(optarg);
     			parameters.dynamic = true;
     			break;
-  			case 'f':
+    		case 'f':
+    			parameters.file = optarg;
+    			break;
+  			case 'F':
   				parameters.fips = true;
   				break; 
   			case 'g':

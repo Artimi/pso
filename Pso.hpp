@@ -1,4 +1,5 @@
 #pragma once
+#include <fstream>
 #include "Parameters.hpp"
 #include "Particle.hpp"
 #include "MathVector.hpp"
@@ -23,6 +24,7 @@ struct PSO
 	Particle::Particles population;
 	int pop_size;
 	int dimension;
+	std::ofstream file;
 
 	PSO(double (*f)(MathVector), DimensionLimits dims,
 	 Parameters params): func(f), dimensionLimits(dims),
@@ -30,6 +32,11 @@ struct PSO
 	{
 		dimension = dims.min.size();
 		pop_size = 20 + 2 *  dimension; //should be sqrt
+		if(parameters.file != "")
+		{
+			file.open(parameters.file);
+			headerToFile();
+		}
         generatePopulation();
         if(parameters.gbest)
             addGbestNeighbours();
@@ -39,10 +46,22 @@ struct PSO
             addSampleNeighbours();
 	};	
 
+	~PSO()
+	{
+		if (parameters.file != "")
+		{
+			footerToFile();
+			file.close();
+		}
+	}
+
 	void generatePopulation();
 	void addSampleNeighbours();
 	void addLbestNeighbours();
 	void addGbestNeighbours();
 	Particle::ParticlePtr getBestParticle();
+	void headerToFile();
+	void footerToFile();
+	void recordState(Result);
 	Result fmin();
 };
