@@ -60,7 +60,6 @@ Parameters parse(int argc, char * argv[])
     int index;
     int iarg = 0;
 
-    //turn off getopt error message
     while(iarg != -1)
     {
     	iarg = getopt_long(argc, argv, "w:c:i:d:I:n:fgl:p:h", longopts, &index);
@@ -110,6 +109,7 @@ Parameters parse(int argc, char * argv[])
            		exit(1);
            		break;
     	}
+  	}
     	if((parameters.gbest and parameters.lbest > 0) or 
     		(parameters.gbest and parameters.dynamic) or
     		(parameters.lbest > 0 and parameters.dynamic))
@@ -120,6 +120,5 @@ Parameters parse(int argc, char * argv[])
     	if(parameters.lbest == 0 and not parameters.dynamic)
     		parameters.gbest = true;
 
-  	}
   	return parameters; 
 }

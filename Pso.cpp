@@ -89,6 +89,11 @@ Result PSO::fmin()
         result.best = getBestParticle();
         if(result.best->x_fitness < 1e-10)
             result.success = true;
+        if(parameters.dynamic and parameters.dynamic_iterations % result.iterations == 0)
+        {
+        	addSampleNeighbours();
+        }
+
     }
 	return result;
 }

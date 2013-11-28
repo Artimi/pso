@@ -24,6 +24,7 @@ struct Particle
 	double (*func)(MathVector);
 	Parameters parameters;
 
+
 	Particle(int id, DimensionLimits d, double (*f)(MathVector),
 		Parameters params):
 	id(id),dimension(d), func(f), parameters(params)

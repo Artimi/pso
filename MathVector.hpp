@@ -48,3 +48,4 @@ MathVector operator+(const MathVector m, const double d);
 MathVector operator+(const double d, const MathVector m);
 MathVector operator*(const MathVector m, const double d);
 MathVector operator*(const double d ,const MathVector m);
+extern unsigned seed;
