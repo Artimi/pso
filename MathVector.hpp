@@ -10,6 +10,15 @@ struct DimensionLimits
 {
     std::vector<double> min;
     std::vector<double> max;
+
+    DimensionLimits(int dimension, double minvalue, double maxvalue)
+    {
+        for(int i = 0; i < dimension; i++)
+        {
+            min.push_back(minvalue);
+            max.push_back(maxvalue);
+        }
+    };
 };
 
 struct MathVector
