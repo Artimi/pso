@@ -33,16 +33,30 @@ void PSO::addLbestNeighbours()
 	for(int i = 0; i < pop_size; i++)
 	{
 		int down = (i - parameters.lbest) % pop_size;
+		if(down < 0)
+			down = pop_size + down;
 		int up = (i + parameters.lbest + 1) % pop_size;
 		Particle::Particles n;
 		if (down < up)
 		{
-			n.insert(n.begin(), population.begin() + down, population.begin() + up);
+			n.insert(n.end(), population.begin() + down, population.begin() + i);
+			n.insert(n.end(), population.begin() + i + 1, population.begin() + up);
 		}
 		else
 		{
-			n.insert(n.begin(), population.begin(), population.begin() + up);
-			n.insert(n.end(), population.begin() + down, population.end());
+			if (i < up)
+			{  
+				n.insert(n.end(), population.begin(), population.begin() + i);
+				n.insert(n.end(), population.begin() + i +1 , population.begin() + up);
+				n.insert(n.end(), population.begin() + down, population.end());
+			}
+			else
+			{
+
+				n.insert(n.end(), population.begin(), population.begin() + up);
+				n.insert(n.end(), population.begin() + down, population.begin() + i);
+				n.insert(n.end(), population.begin() + i + 1, population.end());
+			}
 		}
 		population[i]-> neighbours = n;
 	}
