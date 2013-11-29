@@ -87,7 +87,31 @@ Particle::ParticlePtr PSO::getBestParticle()
 
 void PSO::headerToFile()
 {
-	file << "{\"states\": [";
+	bool comma;
+	file << "{" << std::endl;
+	file << "\"problem\": \"" << parameters.problem<< "\","<< std::endl; 
+	file << "\"dimension_min\" : [";
+	comma = false;
+	for (auto d: dimensionLimits.min)
+	{
+		if(comma)
+			file  << ", ";
+		file << d;
+		comma = true;
+	}
+	file << "]," << std::endl;
+
+	file << "\"dimension_max\" : [";
+	comma = false;
+	for (auto d: dimensionLimits.max)
+	{
+		if(comma)
+			file  << ", ";
+		file << d;
+		comma = true;
+	}
+	file << "]," << std::endl;
+	file << "\"states\": [";
 }
 
 void PSO::footerToFile()
@@ -102,7 +126,7 @@ void PSO::recordState(Result state)
 		file << ", ";
 	file << std::endl << "{\"iteration\": " << state.iterations
 	<< ","<< std::endl
-	<< "\"best_id\": " << state.best->id << "," << std::endl 
+	<< "\"best_id\": " << state.best->id << "," << std::endl
 	<< "\"particles\": [" << std::endl;
 	pop_comma = false;
 	for(auto p: population)
