@@ -18,7 +18,7 @@ def rosenbrock(x, y):
 	return (1 - x)**2 + 100 * (y - x**2)**2
 
 def rastrigin(x, y):
-	return x**2 - 10 * np.cos(2 * np.pi * x) + y ** 2 -10 * np.cos(2 * np.pi * y) 
+	return 20 + x**2 - 10 * np.cos(2 * np.pi * x) + y ** 2 -10 * np.cos(2 * np.pi * y) 
 
 functions = {"sphere" : {"f": sphere, "minimum": [0.0, 0.0]},
  "rosenbrock": {"f": rosenbrock, "minimum": [1.0, 1.0]},
