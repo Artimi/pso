@@ -90,6 +90,7 @@ void PSO::headerToFile()
 	bool comma;
 	file << "{" << std::endl;
 	file << "\"problem\": \"" << parameters.problem<< "\","<< std::endl; 
+	file << "\"parameters\": \"" << parameters << "\"," << std::endl;
 	file << "\"dimension_min\" : [";
 	comma = false;
 	for (auto d: dimensionLimits.min)

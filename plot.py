@@ -44,10 +44,8 @@ class Plotter(object):
 	def save_imgs(self, path):
 		self.path = path
 		for i, state in enumerate(self.d["states"]):
-			dest_path = os.path.join(self.path, str(i) + ".png")
+			dest_path = os.path.join(self.path, "{:0>3d}".format(i) + ".png")
 			self.draw(state, dest_path)
-			if i > 50:
-				break
 
 	# def save_gif(self, path):
 	# 	fig = pl.figure(dpi=80)
@@ -65,12 +63,18 @@ class Plotter(object):
 
 	def draw(self, state, dest_path):
 		pl.cla()
+		fig, ax = pl.subplots()
+		pl.title("Problem: {}, iteration: {}".format(self.problem, state["iteration"]))
 		pl.xlim(self.X.min(), self.X.max())
 		pl.ylim(self.Y.min(), self.Y.max())
 		pl.scatter(functions[self.problem]["minimum"][0], functions[self.problem]["minimum"][1], marker="x", c='k')
-		pl.imshow(self.f(self.X, self.Y), extent=(self.X.min(), self.X.max(), self.Y.min(), self.Y.max()))
+		im = pl.imshow(self.f(self.X, self.Y), extent=(self.X.min(), self.X.max(), self.Y.min(), self.Y.max()), origin='lower')
+		im.set_interpolation("bilinear")
+		cb = fig.colorbar(im, ax=ax)
 		self.scatter_particles(state)
-		pl.savefig(dest_path)
+		pl.figtext(1.0, 0.5, self.d["parameters"].replace(", ", "\n "))
+		pl.tight_layout()
+		pl.savefig(dest_path, bbox_inches='tight', dpi=100)
 
 	def scatter_particles(self, state):
 		for particle in state["particles"]:
@@ -93,4 +97,4 @@ if __name__ == '__main__':
 		record = json.load(fp)
 	p = Plotter(record)
 	p.save_imgs(args.path)
-	# p.save_gif(args.path)
+	# p.draw(record["states"][0], "records/1.png")

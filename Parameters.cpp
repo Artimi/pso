@@ -5,19 +5,19 @@
 
 std::ostream &operator<<(std::ostream &out, Parameters p)
 {
-	out << "w: " << p.w << std::endl
-		<< "c: " << p.c << std::endl
-		<< "max-iterations: " << p.max_iterations << std::endl
-		<< "dimension: " << p.dimension << std::endl
-        << "population: " << p.population << std::endl
-		<< "dynamic: " << p.dynamic << std::endl
-		<< "dynamic-iterations: " << p.dynamic_iterations << std::endl
-		<< "dynamic-neighbours: " << p.dynamic_neighbours << std::endl
-		<< "fips: " << p.fips << std::endl
-		<< "gbest: " << p.gbest << std::endl
-		<< "lbest: " << p.lbest << std::endl
-		<< "problem: " << p.problem << std::endl
-		<< "file: " << p.file << std::endl;
+	out << "w: " << p.w << ", "
+		<< "c: " << p.c << ", "
+		<< "max-iterations: " << p.max_iterations << ", "
+		<< "dimension: " << p.dimension << ", "
+        << "population: " << p.population << ", "
+		<< "dynamic: " << p.dynamic << ", "
+		<< "dynamic-iterations: " << p.dynamic_iterations << ", "
+		<< "dynamic-neighbours: " << p.dynamic_neighbours << ", "
+		<< "fips: " << p.fips << ", "
+		<< "gbest: " << p.gbest << ", "
+		<< "lbest: " << p.lbest << ", "
+		<< "problem: " << p.problem << ", "
+		<< "file: " << p.file;
 	return out;
 }
 
