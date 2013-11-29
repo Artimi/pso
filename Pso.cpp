@@ -174,8 +174,8 @@ Result PSO::fmin()
         }
         for(auto particle: population)
         {
-            particle->updateVelocity();
             particle->updatePosition();
+            particle->updateVelocity();
         }
         result.iterations += 1;
         result.best = getBestParticle();

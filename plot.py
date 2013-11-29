@@ -2,7 +2,6 @@
 # -*- encoding: utf-8 -*-
 
 import matplotlib
-matplotlib.use("Agg")
 import numpy as np
 import pylab as pl
 import json
@@ -16,7 +15,7 @@ def sphere(x, y):
 	return x * x + y * y
 
 def rosenbrock(x, y):
-	return (1 - x)**2 + 100 (y - x**2)**2
+	return (1 - x)**2 + 100 * (y - x**2)**2
 
 def rastrigin(x, y):
 	return x**2 - 10 * np.cos(2 * np.pi * x) + y ** 2 -10 * np.cos(2 * np.pi * y) 
@@ -47,6 +46,8 @@ class Plotter(object):
 		for i, state in enumerate(self.d["states"]):
 			dest_path = os.path.join(self.path, str(i) + ".png")
 			self.draw(state, dest_path)
+			if i > 50:
+				break
 
 	# def save_gif(self, path):
 	# 	fig = pl.figure(dpi=80)
@@ -73,10 +74,13 @@ class Plotter(object):
 
 	def scatter_particles(self, state):
 		for particle in state["particles"]:
+			x, y = particle["x"]
+			vx, vy = particle["v"]
 			if particle["id"] == state["best_id"]:
-				pl.scatter(particle["x"][0], particle["x"][1], c='y', s=35)
+				pl.scatter(x, y, c='y', s=35)
 			else:
 				pl.scatter(particle["x"][0], particle["x"][1], c='k')
+			pl.arrow(x, y, vx, vy, shape="full", head_width=0.03, width=0.00001, alpha=0.3)
 
 
 if __name__ == '__main__':
