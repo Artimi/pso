@@ -31,7 +31,10 @@ struct PSO
 	 parameters(params)
 	{
 		dimension = dims.min.size();
-		pop_size = 20 + 2 *  dimension; //should be sqrt
+		if(parameters.population == 0)
+			pop_size = 20 + dimension;
+		else
+			pop_size = parameters.population;
 		if(parameters.file != "")
 		{
 			file.open(parameters.file);

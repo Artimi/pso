@@ -9,6 +9,7 @@ std::ostream &operator<<(std::ostream &out, Parameters p)
 		<< "c: " << p.c << std::endl
 		<< "max-iterations: " << p.max_iterations << std::endl
 		<< "dimension: " << p.dimension << std::endl
+        << "population: " << p.population << std::endl
 		<< "dynamic: " << p.dynamic << std::endl
 		<< "dynamic-iterations: " << p.dynamic_iterations << std::endl
 		<< "dynamic-neighbours: " << p.dynamic_neighbours << std::endl
@@ -29,6 +30,7 @@ void printHelp()
 	<< "-i, --max-iterations\t\tupper limit for iterations" << std::endl
 	<< "-d, --dimension\t\t\tset dimension of the problem" << std::endl
 	<< "-p, --problem\t\t\tproblem to solve: sphere, rosenbrock, rastrigin, test" << std::endl
+    << "-P, --population\t\tnumber of particles, default 20 + dimension" << std::endl
 	<< "-f, --file\t\t\trecord computing to file, JSON format" << std::endl
 	<< "-F, --fips\t\t\tuse Fully Informed Particle Swarm" << std::endl
 	<< "-h, --help\t\t\tshow this help" << std::endl
@@ -49,6 +51,7 @@ Parameters parse(int argc, char * argv[])
     {"c", required_argument, 0, 'c'},
     {"max-iterations", required_argument, 0, 'i'},
     {"dimension", required_argument, 0, 'd'},
+    {"population", required_argument, 0, 'P'},
     {"dynamic-iterations", required_argument, 0, 'I'},
     {"dynamic-neighbours", required_argument, 0, 'n'},
     {"file", required_argument, 0, 'f'},
@@ -65,7 +68,7 @@ Parameters parse(int argc, char * argv[])
 
     while(iarg != -1)
     {
-    	iarg = getopt_long(argc, argv, "w:c:i:d:I:n:f:F:gl:p:h", longopts, &index);
+    	iarg = getopt_long(argc, argv, "w:c:i:d:I:n:f:F:gl:p:P:h", longopts, &index);
 
     	switch (iarg)
     	{
@@ -104,6 +107,9 @@ Parameters parse(int argc, char * argv[])
     		case 'p':
     			parameters.problem = optarg;
     			break;
+            case 'P':
+                parameters.population = std::stoi(optarg);
+                break;
         	case 'h':
         		printHelp();
         		exit(0);
