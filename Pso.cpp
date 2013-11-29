@@ -101,18 +101,9 @@ void PSO::recordState(Result state)
 	if (state.iterations != 1)
 		file << ", ";
 	file << std::endl << "{\"iteration\": " << state.iterations
-	<< ","<< std::endl <<"\"best_x\" : [";
-	comma = false;
-	for (auto i: state.best->x.vector)
-	{
-		if(comma)
-			file << ", ";
-		file << i;
-		comma = true;
-	}
-	file << "], " << std::endl
-		<< "\"best_fitness\": " << state.best->x_fitness << "," << std::endl 
-		<< "\"particles\": [" << std::endl;
+	<< ","<< std::endl
+	<< "\"best_id\": " << state.best->id << "," << std::endl 
+	<< "\"particles\": [" << std::endl;
 	pop_comma = false;
 	for(auto p: population)
 	{
