@@ -23,10 +23,7 @@ void Particle::updateVelocity()
 	}
 	else
 	{
-		if (best->p_fitness < p_fitness)
-			v = parameters.w * v + randDouble(0.0, parameters.c) * (p - x) + randDouble(0.0, parameters.c) * (best->p - x);
-		else
-			v = parameters.w * v + randDouble(0.0, parameters.c) * (p - x);
+		v = parameters.w * v + randDouble(0.0, parameters.c) * (p - x) + randDouble(0.0, parameters.c) * (best->p - x);
 	}
 }
 
@@ -63,10 +60,10 @@ void Particle::updateBest()
 	double min = std::numeric_limits<double>::infinity();
 	for(auto particle: neighbours)
 	{
-		if(particle->x_fitness < min)
+		if(particle->p_fitness < min)
 		{
 			best = particle;
-			min = particle->x_fitness;
+			min = particle->p_fitness;
 		}
 	}
 }
