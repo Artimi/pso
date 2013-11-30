@@ -8,8 +8,6 @@ import json
 import sys
 import os.path
 from matplotlib import animation
-def f(x, y):
-    return (1 - x / 2 + x ** 5 + y ** 3) * np.exp(-x ** 2 - y ** 2)
 
 def sphere(x, y):
 	return x * x + y * y
@@ -47,20 +45,6 @@ class Plotter(object):
 			dest_path = os.path.join(self.path, "{:0>3d}".format(i) + ".png")
 			self.draw(state, dest_path)
 
-	# def save_gif(self, path):
-	# 	fig = pl.figure(dpi=80)
-	# 	anim = animation.FuncAnimation(fig, self.animate, frames=len(self.d["states"]), blit=False)
-	# 	# anim.save(path, writer="imagemagick", fps=4)
-	# 	anim.save(path, writer=animation.FFMpegWriter(), fps=4)
-
-	# def animate(self, state):
-	# 	pl.cla()
-	# 	pl.xlim(self.X.min(), self.X.max())
-	# 	pl.ylim(self.Y.min(), self.Y.max())
-	# 	pl.scatter(functions[self.problem]["minimum"][0], functions[self.problem]["minimum"][1], marker="x", c='k')
-	# 	pl.imshow(self.f(self.X, self.Y), extent=(self.X.min(), self.X.max(), self.Y.min(), self.Y.max()))
-	# 	self.scatter_particles(self.d["states"][state])
-
 	def draw(self, state, dest_path):
 		pl.cla()
 		fig, ax = pl.subplots()
@@ -97,4 +81,3 @@ if __name__ == '__main__':
 		record = json.load(fp)
 	p = Plotter(record)
 	p.save_imgs(args.path)
-	# p.draw(record["states"][0], "records/1.png")
