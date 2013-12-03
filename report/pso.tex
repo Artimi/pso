@@ -27,14 +27,11 @@
 \maketitle
 
 \section*{Abstrakt}
-%\blindtext
-\cite{neng}\cite{molga2005test}
 Tato práce se zabývá popisem vývoje implementace pro optimalizační stochastickou metody Particle Swarm Optimization (PSO). Popisuje základní algoritmus i jeho možné varianty. Představuje architekturu programu \texttt{pso} a jeho základní použití. Tento program je pak podroben experimentům na běžných optimalizačních funkcích.
 
 %\begin{multicols}{2}
 
 \section{Úvod}
-%\blindtext
 V této práci se budu zabývat stochastickou optimalizační metodou Particle Swarm  Optimization (PSO). 
 Ta byla vytvořena pro iterativní prohledávání stavového prostoru pomocí \textit{částic}, které mají \textit{pozici} a \textit{rychlost}. Tyto částice mají zároveň určitou paměť o pozici svého nejlepšího výsledku a také o částicích z určitého okolí.
 
@@ -119,46 +116,94 @@ Dynamické topologie se na rozdíl od statických topologií mění v průběhu 
 Dalším příkladem může být rozdělení částic do \textit{kmenů}, kdy jsou všechny v daném kmenu v gbest topologii. Ty kmeny s dobrými výsledky můžou těžit z odchodu horších částic, zatímco kmeny nemající uspokojivé řešení mohou získat příchodem nového jedince.
 %--------------------------------------------------------------------
 \section{Implementace} \label{implementace}
-\blindtext
+Jako implementační jazyk jsem si zvolil C++ v nejnovějším standartu C++11. Aplikace je ve formě command line aplikace, minimalizující vybrané optimalizační funkce. Program má dostupné přepínače ovlivňující postup výpočtu.
 
 \subsection{Architektura}
-\blindtext
+Zdrojový kód se skládá z několika tříd. Grafický popis lze nalézt na obrázku~\ref{pic:uml}. Za základní stavební prvek můžeme považovat třídu \texttt{MathVector}, která modeluje základní matematické operace jako je sčítání a násobení vektorů podle prvků, jak je třeba v algoritmu. Částici představuje třída \texttt{Particle}, která obsahuje vektor \texttt{x} současné polohy, \texttt{v} pro rychlost a \texttt{p} pro nejlepší minulou polohu částice. Také obsahuje základní metody modelující pohyb částice. Třída \texttt{PSO} je hlavní třídou celého modelu a poskytuje funkce pro inicializaci, kontrolu a běh celého programu. V modulu \texttt{Testbed} jsou naprogramovány základní optimalizační problémy, které aplikace řeší. Tyto funkce jsou více popsány v kapitole~\ref{sec:optimalizacni-problemy}.
+\begin{figure*}[h]
+\label{pic:uml}
+\centering
+\includegraphics[width=14cm]{pics/uml.pdf}
+\caption{UML diagram důležitých částí výsledného programu}
+\end{figure*}
+
 
 \subsection{Použití}
-\blindtext
+Pro překlad aplikace je třeba použít příkaz \texttt{make}. Pro překlad byl použit program \texttt{gcc} ve verzi 4.8.2.
 
+Po kompilaci projektu je možno spustit program následujícím způsobem:
+\begin{verbatim}
+
+./pso -h
+Usage: pso [FLAGS]
+-w, --w				inertia
+-c, --c				constriction
+-i, --max-iterations		upper limit for iterations
+-d, --dimension			set dimension of the problem
+-p, --problem			problem to solve: sphere, rosenbrock, rastrigin, test
+-P, --population		number of particles, default 20 + dimension
+-f, --file			record computing to file, JSON format
+-F, --fips			use Fully Informed Particle Swarm
+-h, --help			show this help
+
+Topology settings:
+-g, --gbest			use gbest topology
+-l, --lbest			use lbest topology
+-I, --dynamic-iterations	change dynamic topology every value iterations
+-n, --dynamic-neighbours	have value neighbours in dynamic topology
+\end{verbatim}
 \subsection{Kreslení grafů}
-\blindtext
+Pro vizualizaci hledání minima jsem napsal skript v Pythonu, který vygeneruje z výpočtu obrázek současného stavu pro každou iteraci. Ze zjevných důvodů lze zobrazovat pouze výpočet dvourozměrné funkce.
+\begin{figure*}[h]
+\label{pic:plot-example}
+\centering
+\includegraphics[width=14cm]{pics/033.png}
+\caption{Ukázka výstupu skriptu, pro kreslení grafů}
+\end{figure*}
 
 %--------------------------------------------------------------------
 \section{Experimenty} \label{experimenty}
 \blindtext
 
-\subsection{Optimalizační problémy}
-\blindtext
+\subsection{Optimalizační problémy} \label{sec:optimalizacni-problemy}
+Pro testování schopnosti nalézt minimum jsem vybral tři známé optimalizační funkce. Čerpal jsem z~\cite{molga2005test}. Všechny tři funkce mají pouze jedno minimum a to je rovno 0.0. Všechny funkce jsou zadány pro libovolný počet $n$ dimenzí problému.
 
 \subsubsection*{Sphere}
-\blindtext
+Funkce sphere je nejjednodušší optimalizační problém a slouží jen pro ověření nejzákladnější správnosti algoritmu.
+\begin{description}
+\item[Funkční předpis] $f(\vec{x}) = \sum\limits_{i=1}^n x_i^2$
+\item[Minimum] $f(\vec{x}) = 0, x_i = 0, i = 1,\dots,n$
+\end{description}
 \begin{figure*}[h]
 \centering
 \includegraphics[width=10cm]{pics/sphere.eps}
-\caption{Funkce sphere}
+\caption{2-D funkce sphere}
 \end{figure*}
 
 \subsubsection*{Rosenbrock}
-\blindtext
+Také nazývána jako Valley function nebo banana function. Má podobu údolí, které není problém nalézt, ale nalézt jeho minimum už je obtížnější, protože je to jen malá prohlubeň v jinak mělkém povrchu.
+\begin{description}
+\item[Funkční předpis] $f(\vec{x}) = \sum\limits_{i=1}^{n-1} [100(x_{i+1} - x_i^2)^2 + (1 + x_i)^2]$
+\item[Minimum] $f(\vec{x}) = 0, x_i = 1, i = 1,\dots,n$
+\end{description}
 \begin{figure*}[h]
 \centering
 \includegraphics[width=10cm]{pics/rosenbrock.eps}
-\caption{Funkce Rosenbrock}
+\caption{2-D funkce Rosenbrock}
 \end{figure*}
 
 \subsubsection*{Rastrigin}
-\blindtext
+Rastriginova funkce vypadá jako nejnáročnější a testy také odhalily, že byla správně vypočítáná v nejméně případech. Obsahuje velké množství lokálních minim, ze kterých už se hejno nemusí dostat.
+
+\begin{description}
+\item[Funkční předpis] $f(\vec{x}) = 10n + \sum\limits_{i=1}^n [x_i^2 - 10 cos (2 \pi x_i)]$
+\item[Minimum] $f(\vec{x}) = 0, x_i = 0, i = 1,\dots,n$
+\end{description}
+
 \begin{figure*}[h]
 \centering
 \includegraphics[width=10cm]{pics/rastrigin.eps}
-\caption{Funkce rastrigin}
+\caption{2-D funkce rastrigin}
 \end{figure*}
 
 \subsection{Testy}
