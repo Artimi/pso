@@ -39,6 +39,7 @@ void printHelp()
 	<< "Topology settings:" << std::endl
 	<< "-g, --gbest\t\t\tuse gbest topology" << std::endl
 	<< "-l, --lbest\t\t\tuse lbest topology" << std::endl
+    << "-D --dynamic\t\t\tuse dynamic topology"
 	<< "-I, --dynamic-iterations\tchange dynamic topology every value iterations" << std::endl
 	<< "-n, --dynamic-neighbours\thave value neighbours in dynamic topology" << std::endl;
 }
@@ -53,6 +54,7 @@ Parameters parse(int argc, char * argv[])
     {"max-iterations", required_argument, 0, 'i'},
     {"dimension", required_argument, 0, 'd'},
     {"population", required_argument, 0, 'P'},
+    {"dynamic", no_argument, 0, 'D'},
     {"dynamic-iterations", required_argument, 0, 'I'},
     {"dynamic-neighbours", required_argument, 0, 'n'},
     {"file", required_argument, 0, 'f'},
@@ -69,7 +71,7 @@ Parameters parse(int argc, char * argv[])
 
     while(iarg != -1)
     {
-    	iarg = getopt_long(argc, argv, "w:c:i:d:I:n:f:F:gl:p:P:h", longopts, &index);
+    	iarg = getopt_long(argc, argv, "w:c:i:d:I:n:f:F:gl:p:P:hD", longopts, &index);
 
     	switch (iarg)
     	{
@@ -85,6 +87,9 @@ Parameters parse(int argc, char * argv[])
     		case 'd':
     			parameters.dimension = std::stoi(optarg);
     			break;
+            case 'D':
+                parameters.dynamic = true;
+                break;
     		case 'I':
     			parameters.dynamic_iterations = std::stoi(optarg);
     			parameters.dynamic = true;
@@ -130,6 +135,11 @@ Parameters parse(int argc, char * argv[])
     		std::cerr << "Only one topology parameter can be set!" << std::endl;
     		exit(1);
     	}
+        if(parameters.lbest >= parameters.population / 2)
+        {
+            std::cerr << "Lbest parameter can be max half of population size!"<< std::endl;
+            exit(1);
+        }
     	if(parameters.lbest == 0 and not parameters.dynamic)
     		parameters.gbest = true;
 

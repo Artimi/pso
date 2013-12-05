@@ -31,18 +31,13 @@ void iterationTest(Parameters parameters)
 			}
 			problem_runs += 1;
 		}
-		// std::cout << it->first << " succeed: " << problem_success
-		// 		 << "/" << problem_runs <<  " = " 
-		// 		 << (double) problem_success / problem_runs << std::endl
-		// 		 << "\titeration per succesfull run: " << (double) problem_iterations / problem_success
-		// 		 << std::endl;
+		std::cout << it->first << " success: " << (double) problem_success / problem_runs << std::endl
+				<< "iteration: " << (double) problem_iterations / problem_success << std::endl;
 		success += problem_success;
 		runs += problem_runs;
 		iterations += problem_iterations;
 	}
-	// std::cout << "Total succeed: " << success
-				 // << "/" << runs <<  " = " 
-		std::cout << "success: " << (double) success / runs<< std::endl
+		std::cout << "Total success: " << (double) success / runs<< std::endl
 				 << "iteration: " << (double) iterations / success
 				 << std::endl;
 }
@@ -100,5 +95,10 @@ int main(int argc, char * argv[])
 	else if(parameters.problem == "iterationTest")
 	{
 		iterationTest(parameters);
+	}
+	else
+	{
+		std::cerr << "Problem function " << parameters.problem << " not found." << std::endl;
+		exit(1);
 	}
 }

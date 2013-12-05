@@ -31,5 +31,5 @@ double rastriginFunction(MathVector x)
 }
 
 std::map<std::string, TestFunction> Tests{{"sphere", &sphereFunction},
-													 {"rosenbrock", &rosenbrockFunction},
-													 {"rastrigin", &rastriginFunction}};
+										  {"rosenbrock", &rosenbrockFunction},
+										  {"rastrigin", &rastriginFunction}};
