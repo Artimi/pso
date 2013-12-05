@@ -1,8 +1,9 @@
 pso - Particle Swarm Optimization
 =================================
 
-My experiment with this wonderfull stochastic optimisation method. You can find more information about it on [wikipedia][http://en.wikipedia.org/wiki/Particle_swarm_optimization] or in [this paper][ftp://emci.udg.edu/amade/mms/OME/treballs/articles_PSO/Particle-swarm-optimization-SI-Vol-1.pdf].
+My experiment with this wonderfull stochastic optimisation method. You can find more information about it on [wikipedia](http://en.wikipedia.org/wiki/Particle_swarm_optimization) or in [this paper](ftp://emci.udg.edu/amade/mms/OME/treballs/articles_PSO/Particle-swarm-optimization-SI-Vol-1.pdf).
 
+You can find documentation of this project (in czech) [here](http://www.stud.fit.vutbr.cz/~xsebek02/sfc/pso.pdf)
 Installation
 ============
 ```
