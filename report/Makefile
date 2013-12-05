@@ -8,6 +8,7 @@ $(CO).ps: $(CO).dvi
 	dvips $(CO)
 
 $(CO).pdf: clean
+	vlna -l -m -n -v KkSsVvZzOoUuAaIi pso.tex
 	pdflatex $(CO)
 	bibtex $(CO)
 	pdflatex $(CO)

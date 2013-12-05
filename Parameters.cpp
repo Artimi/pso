@@ -17,7 +17,7 @@ std::ostream &operator<<(std::ostream &out, Parameters p)
 		<< "gbest: " << p.gbest << ", "
 		<< "lbest: " << p.lbest << ", "
 		<< "problem: " << p.problem << ", "
-		<< "file: " << p.file;
+		<< "file: " << p.file ;
 	return out;
 }
 
@@ -29,8 +29,9 @@ void printHelp()
 	<< "-c, --c\t\t\t\tconstriction" << std::endl
 	<< "-i, --max-iterations\t\tupper limit for iterations" << std::endl
 	<< "-d, --dimension\t\t\tset dimension of the problem" << std::endl
-	<< "-p, --problem\t\t\tproblem to solve: sphere, rosenbrock, rastrigin, test" << std::endl
-    << "-P, --population\t\tnumber of particles, default 20 + dimension" << std::endl
+	<< "-p, --problem\t\t\tproblem to solve: sphere, rosenbrock, rastrigin" << std::endl
+                    <<"\t\t\t\tdimensionTest, iterationTest" << std::endl
+    << "-P, --population\t\tnumber of particles, default 20 + 2 * dimension" << std::endl
 	<< "-f, --file\t\t\trecord computing to file, JSON format" << std::endl
 	<< "-F, --fips\t\t\tuse Fully Informed Particle Swarm" << std::endl
 	<< "-h, --help\t\t\tshow this help" << std::endl

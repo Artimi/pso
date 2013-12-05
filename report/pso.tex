@@ -13,6 +13,8 @@
 \usepackage{multicol}
 \usepackage{blindtext}
 \usepackage{lipsum}
+\usepackage{hyperref}
+\usepackage{float}
 
 \title{Particle Swarm Optimization} 
 \author{Petr Šebek, xsebek02@stud.fit.vutbr.cz}
@@ -27,120 +29,122 @@
 \maketitle
 
 \section*{Abstrakt}
-Tato práce se zabývá popisem vývoje implementace pro optimalizační stochastickou metody Particle Swarm Optimization (PSO). Popisuje základní algoritmus i jeho možné varianty. Představuje architekturu programu \texttt{pso} a jeho základní použití. Tento program je pak podroben experimentům na běžných optimalizačních funkcích.
+Tato práce se zabývá popisem vývoje implementace pro optimalizační stochastickou metody Particle Swarm Optimization (PSO). Popisuje základní algoritmus i~jeho možné varianty. Představuje architekturu programu \texttt{pso} a~jeho základní použití. Tento program je pak podroben experimentům na běžných optimalizačních funkcích.
 
 %\begin{multicols}{2}
 
 \section{Úvod}
-V této práci se budu zabývat stochastickou optimalizační metodou Particle Swarm  Optimization (PSO). 
-Ta byla vytvořena pro iterativní prohledávání stavového prostoru pomocí \textit{částic}, které mají \textit{pozici} a \textit{rychlost}. Tyto částice mají zároveň určitou paměť o pozici svého nejlepšího výsledku a také o částicích z určitého okolí.
+V~této práci se budu zabývat stochastickou optimalizační metodou Particle Swarm  Optimization (PSO). 
+Ta byla vytvořena pro iterativní prohledávání stavového prostoru pomocí \textit{částic}, které mají \textit{pozici} a~\textit{rychlost}. Tyto částice mají zároveň určitou paměť o~pozici svého nejlepšího výsledku a~také o~částicích z~určitého okolí.
 
-Metoda PSO je relativně nová. První práce osvětlující principy PSO~\cite{eberhat1995particle} byla vydána v roce 1995 Kennedym a Eberhartem. Té se postupem času dostalo mnoho pozornosti bylo o ní vydáno mnoho prací zkoumající teoretické i praktické aspekty PSO, shrnutí těchto prací můžeme nalézt v~\cite{poli2007particle}.
+Metoda PSO je relativně nová. První práce osvětlující principy PSO~\cite{eberhat1995particle} byla vydána v~roce 1995 Kennedym a~Eberhartem. Té se postupem času dostalo mnoho pozornosti bylo o~ní vydáno mnoho prací zkoumající teoretické i~praktické aspekty PSO, shrnutí těchto prací můžeme nalézt v~\cite{poli2007particle}.
 
-Práce je organizována následujícím způsobem. V sekci~\ref{algoritmus_pso} je popsán algoritmus PSO z jeho teoretické stránky a jsou popsány také některé jeho varianty a proměnné. Následující kapitola~\ref{implementace} obsahuje popis programu \texttt{pso}, jeho architektury a použití. V kapitole~\ref{experimenty} jsou popsány experimenty provedené na tomto programu a také testovací problémy, které byly použity. V závěrečné kapitole~\ref{zaver} jsou diskutovány výsledky této práce.
+Práce je organizována následujícím způsobem. V~sekci~\ref{algoritmus_pso} je popsán algoritmus PSO z~jeho teoretické stránky a~jsou popsány také některé jeho varianty a~proměnné. Následující kapitola~\ref{implementace} obsahuje popis programu \texttt{pso}, jeho architektury a~použití. V~kapitole~\ref{experimenty} jsou uvedeny experimenty provedené na tomto programu a~také testovací problémy, které byly použity. V~závěrečné kapitole~\ref{zaver} jsou diskutovány výsledky této práce.
 
+\newpage
 %--------------------------------------------------------------------
 \section{Algoritmus PSO} \label{algoritmus_pso}
 %\Blindtext[3][1]
-Idea metody PSO je založena na chování hejna ptáků nebo ryb hledající potravu. Takové hejno se pohybuje v určitém prostoru a snaží se dosáhnout určitého předem neznámého místa. Každý jedinec daného hejna se pak pohybuje na základě ostatních jedinců, většinou ne všech, ale těch z určitého okolí.
+Idea metody PSO je založena na chování hejna ptáků nebo ryb hledající potravu. Takové hejno se pohybuje v~určitém prostoru a~snaží se dosáhnout určitého předem neznámého místa. Každý jedinec daného hejna se pak pohybuje na základě ostatních jedinců, většinou ne všech, ale těch z~určitého okolí.
 
-Matematické zjednodušení je potom následující~\footnote{Použitá notace je převzata z~\cite{sfc08}. Některé symboly jsou přidány nebo změněny, aby více odpovídaly použitým variantám.}. Hledáme ve stavovém prostoru o dimenzi $D \in \mathbb{N}$, kde pro každý rozměr $d \in \{1,\dots,D\}$ jsou stanoveny hodnoty $min_d, max_d \in \mathbb{R}$, které tento prostor efektivně ohraničují. Máme populaci $P$ o určitém počtu $|P| = m$ částic $k$, kde každá má určenou aktuální polohu $\vec{x}^k \in \mathbb{R}^D$ a rychlost $\vec{v}^k \in \mathbb{R}^D$. Každá částice si také pamatuje svoji nejlepší polohu $\vec{x}^k_{best} \in \mathbb{R}^D$ a má také určité okolí $L^k \subseteq P \setminus k$. V daném okolí můžeme také nalézt nejlepší polohu $\vec{x}^{L^k}_{best} \in \mathbb{R}^D$. A konečně nejlepší hodnota celého hejna můžeme označit $\vec{x}_{best} \in \mathbb{R}^D$.
+Matematické zjednodušení je potom následující~\footnote{Použitá notace je převzata z~\cite{sfc08}. Některé symboly jsou přidány nebo změněny, aby více odpovídaly použitým variantám.}. Hledáme ve stavovém prostoru o~dimenzi $D \in \mathbb{N}$, kde pro každý rozměr $d \in \{1,\dots,D\}$ jsou stanoveny hodnoty $min_d, max_d \in \mathbb{R}$, které tento prostor efektivně ohraničují. Máme populaci $P$ o~určitém počtu $|P| = m$ částic $k$, kde každá má určenou aktuální polohu $\vec{x}^k \in \mathbb{R}^D$ a~rychlost $\vec{v}^k \in \mathbb{R}^D$. Každá částice si také pamatuje svoji nejlepší polohu $\vec{x}^k_{best} \in \mathbb{R}^D$ a~má také určité okolí $L^k \subseteq P \setminus k$. V~daném okolí můžeme také nalézt nejlepší polohu $\vec{x}^{L^k}_{best} \in \mathbb{R}^D$. A~konečně nejlepší hodnota celého hejna můžeme označit $\vec{x}_{best} \in \mathbb{R}^D$.
 
 \subsubsection*{Algoritmus Particle Swarm Optimization} \label{algoritmus_pso}
-Tento algoritmus jsem převzal ze~\cite{poli2007particle}. Jeho obsáhlejší a formálnější formu lze nalézt v příloze~\ref{app_algoritmus_pso}.
+Tento algoritmus jsem převzal ze~\cite{poli2007particle}. Jeho obsáhlejší a~formálnější formu lze nalézt v~příloze~\ref{app_algoritmus_pso}.
 \begin{enumerate}
-\item Inicializuj populaci částic náhodnými proměnnými a rychlostmi v prohledávaném prostoru
+\item Inicializuj populaci částic náhodnými proměnnými a~rychlostmi v~prohledávaném prostoru
 \item \textbf{loop}
 \item Pro každou částici vypočítej fitness funkci na dané souřadnici $f(\vec{x}^k)$
-\item Porovnej fitness ohodnocení s ohodnocením nejlepší pozice v minulosti $f(\vec{x}^k_{best})$. Pokud je lepší nastav $\vec{x}^k_{best} := \vec{x}^k$
-\item Najdi částici v okolí částice s nejlepší hodnotou $\vec{x}^k_{best}$ a přiřaď ji do $\vec{x}^{L^k}_{best}$
-\item Změň rychlost a pozici částice podle následujícího vztahu
+\item Porovnej fitness ohodnocení s~ohodnocením nejlepší pozice v~minulosti $f(\vec{x}^k_{best})$. Pokud je lepší nastav $\vec{x}^k_{best} := \vec{x}^k$
+\item Najdi částici v~okolí částice s~nejlepší hodnotou $\vec{x}^k_{best}$ a~přiřaď ji do $\vec{x}^{L^k}_{best}$
+\item Změň rychlost a~pozici částice podle následujícího vztahu
 \begin{eqnarray} 
-\vec{v}^k & := & \omega \cdot v + U(0,c) \cdot (\vec{x}^k_{best} - \vec{x}^k) + U(0,c) \cdot (\vec{x}^{L^k}_{best} -  \vec{x}^k) \label{v-algoritmus}\\
+\vec{v}^k & := & \omega \cdot v~+ U(0,c) \cdot (\vec{x}^k_{best} - \vec{x}^k) + U(0,c) \cdot (\vec{x}^{L^k}_{best} -  \vec{x}^k) \label{v-algoritmus}\\
 \vec{x}^k & := & \vec{x} + \vec{v}^k
 \end{eqnarray}
-\item Pokud byl dosažen hledaný stav tak ukonči algoritmus a vrať $\vec{x}_{best}$
+\item Pokud byl dosažen hledaný stav nebo překročen maximální počet povolených iterací tak ukonči algoritmus a~vrať $\vec{x}_{best}$
 \item \textbf{end loop}
 \end{enumerate}
 
 Poznámka:
 \begin{itemize}
-\item $U(0,c)$ je náhodné číslo dáno rovnoměrným rozložení z intervalu $\langle 0, c)$
+\item $U(0,c)$ je náhodné číslo dáno rovnoměrným rozložení z~intervalu $\langle 0, c)$
 \item $c$ - constriction parametr
 \item $w$ - inertia parametr
-\item Násobení v algoritmu je \textit{element-wise}
+\item Násobení v~algoritmu je \textit{element-wise}
 \end{itemize}
 
 \subsection{Parametry}
 Základním parametrem jaký lze nastavit je velikost populace, ta se běžně nastavuje na $20$-$50$ částic.
 
-\subsubsection{Inertia parametr}
-\textit{Inertia} parametr neboli \textit{setrvačnost} nebyl v původním algoritmu přítomen a byla omezena maximální hodnota rychlosti. To však přinášelo problémy při konvergenci k optimu. Proto bylo toto omezení odstraněno a byl zaveden parametr 
-\textit{inertia}, který je většinou menší než jedna a postupem času tak danou částici zpomaluje a pomáhá lépe konvergovat k nalezenému minimu. Tato hodnota se většinou nastavuje na rozmezí $0.4$ - $0.9$, ale také se může dynamicky snižovat, k zajištění rychlejší konvergence.
+\subsubsection{Parametr setrvačnosti}
+\textit{Inertia} parametr neboli \textit{setrvačnost} nebyl v~původním algoritmu přítomen a~byla omezena maximální hodnota rychlosti. To však přinášelo problémy při konvergenci k~optimu. Proto bylo toto omezení odstraněno a~byl zaveden parametr 
+\textit{inertia}, který je většinou menší než jedna a~postupem času tak danou částici zpomaluje a~pomáhá lépe konvergovat k~nalezenému minimu. Tato hodnota se většinou nastavuje na rozmezí $0.4$ - $0.9$, ale také se může dynamicky snižovat, k~zajištění rychlejší konvergence.
 
 
 \subsubsection{Constriction parametr}
-\textit{Constriction} parametr nám dává maximální míru přihlédnutí k minulé nejlepší poloze částice a nejlepší poloze částice z okolí. Po několika experimentech byl představen vzorec pro změnu rychlosti:
+\textit{Constriction} parametr nám dává maximální míru přihlédnutí k~minulé nejlepší poloze částice a~nejlepší poloze částice z~okolí. Po několika experimentech byl představen vzorec pro změnu rychlosti:
 \begin{equation} \label{v-chi}
 v^k :=  \chi \cdot \left( U(0,c_1) \cdot (\vec{x}^k_{best} - \vec{x}^k) + U(0,c_2) \cdot (\vec{x}^{L^k}_{best} -  \vec{x}^k) \right)
 \end{equation}
-kde $c = c_1 + c_2 > 4$ a
-\begin{equation} \label{chi}
+kde $c = c_1 + c_2 > 4$
+a~\begin{equation} \label{chi}
 \chi = \frac{2}{c - 2 + \sqrt{c^2 - 4 c}}
 \end{equation}
-Hodnoty $c_1$ a $c_2$ byly většinou nastavovány shodné na $2.05$, tedy součin $c = 4.1$, z toho podle~(\ref{chi}) vychází $\chi = 0.7298$ a člen $(\vec{x}^k_{best} - \vec{x}^k)$ byl tak efektivně násoben náhodnou hodnotou omezenou shora $0.7298 \cdot 2.05 = 1.49618$.
+Hodnoty $c_1$ a~$c_2$ byly většinou nastavovány shodné na $2.05$, tedy součin $c = 4.1$, z~toho podle~(\ref{chi}) vychází $\chi = 0.7298$ a~člen $(\vec{x}^k_{best} - \vec{x}^k)$ byl tak efektivně násoben náhodnou hodnotou omezenou shora $0.7298 \cdot 2.05 = 1.49618$.
 
-Vzorec~(\ref{v-chi}) lze snadno převést na vzorec~(\ref{v-algoritmus}) a to s následujícími hodnotami: $w=0.7298$, $c=1.49618$.
+Vzorec~(\ref{v-chi}) lze snadno převést na vzorec~(\ref{v-algoritmus}) a~to s~následujícími hodnotami: $w=0.7298$, $c=1.49618$.
 
 \subsubsection{FIPS}
-Modifikace FIPS, tedy Fully Informed Particle swarm, nepočítá pouze s dvěma vlivy na částici (vlastní minulost a nejlepší hodnota z okolí). Varianta FIPS bere na vědomí nejlepší minulost všech částic ve svém okolí. Vztah pro výpočet rychlosti se potom mění takto:
+Modifikace FIPS, tedy Fully Informed Particle swarm, nepočítá pouze s~dvěma vlivy na částici (vlastní minulost a~nejlepší hodnota z~okolí). Varianta FIPS bere na vědomí nejlepší minulost všech částic ve svém okolí. Vztah pro výpočet rychlosti se potom mění takto:
 \begin{equation}
-\vec{v}^k  :=  \omega \cdot v + \frac{1}{|L^k|} \sum_{j \in L^k} U(0,c) \cdot (\vec{x}^j_{best} - \vec{x}^k)
+\vec{v}^k  :=  \omega \cdot v~+ \frac{1}{|L^k|} \sum_{j \in L^k} U(0,c) \cdot (\vec{x}^j_{best} - \vec{x}^k)
 \end{equation}
 
-Bylo zjištěno, že tato modifikace může zlepšit konvergenci PSO, tedy že nalezne řešení v menším počtu iterací.
+Bylo zjištěno, že tato modifikace může zlepšit konvergenci PSO, tedy že nalezne řešení v~menším počtu iterací.
 
 \subsection{Topologie částic}
-Částice se dělí do různých topologií podle částic, které mají ve svém okolí $L^k$. V počátcích vývoje tohoto algoritmu to bylo okolí v geografickém smyslu, tedy že v okolí byly ty částice, které byly v určitém poloměru v prostoru. To se ukázalo jako výpočetně náročné a také nekonvergovalo dobře k cíli.
+Částice se dělí do různých topologií podle částic, které mají ve svém okolí $L^k$. V~počátcích vývoje tohoto algoritmu to bylo okolí v~geografickém smyslu, tedy že v~okolí byly ty částice, které byly v~určitém poloměru v~prostoru. To se ukázalo jako výpočetně náročné a~také nekonvergovalo dobře k~cíli.
 
-Místo toho byly definovány další topologie. Zde si představíme tři hlavní topologie, byly provedeny pokusy s dalšími topologiemi ve tvaru kol, hvězd a dalšími. Bylo zjištěno, že některé topologie se více hodí na určité problémy, ale žádná nebyla jednoznačně lepší než ostatní.
+Místo toho byly definovány další topologie. Zde si představíme tři hlavní topologie, byly provedeny pokusy s~dalšími topologiemi ve tvaru kol, hvězd a~dalšími. Bylo zjištěno, že některé topologie se více hodí na určité problémy, ale žádná nebyla jednoznačně lepší než ostatní.
 
 \subsubsection{gbest}
-Topologie \textit{gbest} (podle global best) je statická topologie, v jejímž případě má každá částice ve svém okolí všechny částice populace. Lze si tedy přestavit, že všechny částice směřují k místu, které bylo prozatím vyhodnoceno jako nejlepší, zároveň však přihlížejí i ke své minulosti a k náhodě. Tato topologie je považována za rychleji konvergující než následující \textit{lbest}.
+Topologie \textit{gbest} (podle global best) je statická topologie, v~jejímž případě má každá částice ve svém okolí všechny částice populace. Lze si tedy přestavit, že všechny částice směřují k~místu, které bylo prozatím vyhodnoceno jako nejlepší, zároveň však přihlížejí i~ke své minulosti a~k~náhodě. Tato topologie je považována za rychleji konvergující než následující \textit{lbest}.
 
 \subsubsection{lbest}
-Další statickou topologií je \textit{lbest} (local best). Tu si lze představit tak, že každá částice má ve svém okolí částice z populačního pole. To samozřejmě pochází z implementačního hlediska, kdy jsou částice uloženy v nějakém sekvenčním kontejneru. Částice potom bude mít ve svém okolí ty částice, které jsou v tomto kontejneru jejími sousedy. To lze samozřejmě rozšířit na větší poloměr než na nejbližší sousedy. \textit{lbest} topologie je dosahovala lepších výsledků v prohledávání stavového prostoru než \textit{gbest}.
+Další statickou topologií je \textit{lbest} (local best). Tu si lze představit tak, že každá částice má ve svém okolí částice z~populačního pole. To samozřejmě pochází z~implementačního hlediska, kdy jsou částice uloženy v~nějakém sekvenčním kontejneru. Částice potom bude mít ve svém okolí ty částice, které jsou v~tomto kontejneru jejími sousedy. To lze samozřejmě rozšířit na větší poloměr než na nejbližší sousedy. \textit{lbest} topologie je dosahovala lepších výsledků v~prohledávání stavového prostoru než \textit{gbest}.
 \subsubsection{Dynamická topologie}
-Dynamické topologie se na rozdíl od statických topologií mění v průběhu výpočtu.  Bylo provedeno více experimentů s různými topologiemi. Jako nejvíce dynamickou lze považovat metodu, kde každá částice změní své okolí každých několik iterací. 
+Dynamické topologie se na rozdíl od statických topologií mění v~průběhu výpočtu.  Bylo provedeno více experimentů s~různými topologiemi. Jako nejvíce dynamickou lze považovat metodu, kde každá částice změní své okolí každých několik iterací. 
 
-Dalším příkladem může být rozdělení částic do \textit{kmenů}, kdy jsou všechny v daném kmenu v gbest topologii. Ty kmeny s dobrými výsledky můžou těžit z odchodu horších částic, zatímco kmeny nemající uspokojivé řešení mohou získat příchodem nového jedince.
+Dalším příkladem může být rozdělení částic do \textit{kmenů}, kdy jsou všechny v~daném kmenu v~gbest topologii. Ty kmeny s~dobrými výsledky můžou těžit z~odchodu horších částic, zatímco kmeny nemající uspokojivé řešení mohou získat příchodem nového jedince.
+
+\newpage
 %--------------------------------------------------------------------
 \section{Implementace} \label{implementace}
-Jako implementační jazyk jsem si zvolil C++ v nejnovějším standartu C++11. Aplikace je ve formě command line aplikace, minimalizující vybrané optimalizační funkce. Program má dostupné přepínače ovlivňující postup výpočtu.
+Jako implementační jazyk jsem si zvolil C++ v~nejnovějším standartu C++11. Aplikace je ve formě command line aplikace, minimalizující vybrané optimalizační funkce. Program má dostupné přepínače ovlivňující postup výpočtu.
 
 \subsection{Architektura}
-Zdrojový kód se skládá z několika tříd. Grafický popis lze nalézt na obrázku~\ref{pic:uml}. Za základní stavební prvek můžeme považovat třídu \texttt{MathVector}, která modeluje základní matematické operace jako je sčítání a násobení vektorů podle prvků, jak je třeba v algoritmu. Částici představuje třída \texttt{Particle}, která obsahuje vektor \texttt{x} současné polohy, \texttt{v} pro rychlost a \texttt{p} pro nejlepší minulou polohu částice. Také obsahuje základní metody modelující pohyb částice. Třída \texttt{PSO} je hlavní třídou celého modelu a poskytuje funkce pro inicializaci, kontrolu a běh celého programu. V modulu \texttt{Testbed} jsou naprogramovány základní optimalizační problémy, které aplikace řeší. Tyto funkce jsou více popsány v kapitole~\ref{sec:optimalizacni-problemy}.
-\begin{figure*}[h]
-\label{pic:uml}
+Zdrojový kód se skládá z~několika tříd. Grafický popis lze nalézt na obrázku~\ref{pic:uml}. Za základní stavební prvek můžeme považovat třídu \texttt{MathVector}, která modeluje základní matematické operace jako je sčítání a~násobení vektorů podle prvků, jak je třeba v~algoritmu. Částici představuje třída \texttt{Particle}, která obsahuje vektor \texttt{x} současné polohy, \texttt{v} pro rychlost a~\texttt{p} pro nejlepší minulou polohu částice. Také obsahuje základní metody modelující pohyb částice. Třída \texttt{PSO} je hlavní třídou celého modelu a~poskytuje funkce pro inicializaci, kontrolu a~běh celého programu. V~modulu \texttt{Testbed} jsou naprogramovány základní optimalizační problémy, které aplikace řeší. Tyto funkce jsou více popsány v~kapitole~\ref{sec:optimalizacni-problemy}.
+\begin{figure*}[h!]
 \centering
-\includegraphics[width=14cm]{pics/uml.pdf}
+\includegraphics[width=12cm]{pics/uml.pdf}
 \caption{UML diagram důležitých částí výsledného programu}
+\label{pic:uml}
 \end{figure*}
-
 
 \subsection{Použití}
 Pro překlad aplikace je třeba použít příkaz \texttt{make}. Pro překlad byl použit program \texttt{gcc} ve verzi 4.8.2.
 
 Po kompilaci projektu je možno spustit program následujícím způsobem:
 \begin{verbatim}
-
-./pso -h
+$ ./pso -h
 Usage: pso [FLAGS]
 -w, --w				inertia
 -c, --c				constriction
 -i, --max-iterations		upper limit for iterations
 -d, --dimension			set dimension of the problem
--p, --problem			problem to solve: sphere, rosenbrock, rastrigin, test
+-p, --problem			problem to solve: sphere, rosenbrock, rastrigin
+				dimensionTest, iterationTest
 -P, --population		number of particles, default 20 + dimension
 -f, --file			record computing to file, JSON format
 -F, --fips			use Fully Informed Particle Swarm
@@ -152,8 +156,9 @@ Topology settings:
 -I, --dynamic-iterations	change dynamic topology every value iterations
 -n, --dynamic-neighbours	have value neighbours in dynamic topology
 \end{verbatim}
+
 \subsection{Kreslení grafů}
-Pro vizualizaci hledání minima jsem napsal skript v Pythonu, který vygeneruje z výpočtu obrázek současného stavu pro každou iteraci. Ze zjevných důvodů lze zobrazovat pouze výpočet dvourozměrné funkce.
+Pro vizualizaci hledání minima jsem napsal skript v~Pythonu, který vygeneruje z~výpočtu obrázek současného stavu pro každou iteraci. Ze zjevných důvodů lze zobrazovat pouze výpočet dvourozměrné funkce.~\footnote{Animované gify, vzniklé z~těchto vizualizací, lze nalézt na mém blogu na adrese \url{http://www.petrsebek.cz/2013/11/particle-swarm-optimization-experiment.html}}
 \begin{figure*}[h]
 \label{pic:plot-example}
 \centering
@@ -161,18 +166,19 @@ Pro vizualizaci hledání minima jsem napsal skript v Pythonu, který vygeneruje
 \caption{Ukázka výstupu skriptu, pro kreslení grafů}
 \end{figure*}
 
+\newpage
 %--------------------------------------------------------------------
 \section{Experimenty} \label{experimenty}
-\blindtext
+Výslednou aplikaci jsem se rozhodl otestovat na optimalizačních problémech popsaných v~následující podkapitole~(\ref{sec:optimalizacni-problemy}). Pro věrohodnější výsledky jsem vytvořil dva typy testů, ty popisuji v~kapitole~(\ref{sec:testy}). Na těchto testech jsem potom nechal běžet PSO s~různými parametry, výsledky jsou zobrazeny v~kapitole~(\ref{sec:pokusy}).
 
 \subsection{Optimalizační problémy} \label{sec:optimalizacni-problemy}
-Pro testování schopnosti nalézt minimum jsem vybral tři známé optimalizační funkce. Čerpal jsem z~\cite{molga2005test}. Všechny tři funkce mají pouze jedno minimum a to je rovno 0.0. Všechny funkce jsou zadány pro libovolný počet $n$ dimenzí problému.
+Pro testování schopnosti nalézt minimum jsem vybral tři známé optimalizační funkce. Čerpal jsem z~\cite{molga2005test}. Všechny tři funkce mají pouze jedno minimum a~to je rovno 0.0. Všechny funkce jsou zadány pro libovolný počet $n$ dimenzí problému.
 
 \subsubsection*{Sphere}
-Funkce sphere je nejjednodušší optimalizační problém a slouží jen pro ověření nejzákladnější správnosti algoritmu.
+Funkce sphere je nejjednodušší optimalizační problém a~slouží jen pro ověření nejzákladnější správnosti algoritmu.
 \begin{description}
 \item[Funkční předpis] $f(\vec{x}) = \sum\limits_{i=1}^n x_i^2$
-\item[Minimum] $f(\vec{x}) = 0, x_i = 0, i = 1,\dots,n$
+\item[Minimum] $f(\vec{x}) = 0, x_i = 0, i~= 1,\dots,n$
 \end{description}
 \begin{figure*}[h]
 \centering
@@ -181,10 +187,10 @@ Funkce sphere je nejjednodušší optimalizační problém a slouží jen pro ov
 \end{figure*}
 
 \subsubsection*{Rosenbrock}
-Také nazývána jako Valley function nebo banana function. Má podobu údolí, které není problém nalézt, ale nalézt jeho minimum už je obtížnější, protože je to jen malá prohlubeň v jinak mělkém povrchu.
+Také nazývána jako Valley function nebo banana function. Má podobu údolí, které není problém nalézt, ale nalézt jeho minimum už je obtížnější, protože je to jen malá prohlubeň v~jinak mělkém povrchu.
 \begin{description}
 \item[Funkční předpis] $f(\vec{x}) = \sum\limits_{i=1}^{n-1} [100(x_{i+1} - x_i^2)^2 + (1 + x_i)^2]$
-\item[Minimum] $f(\vec{x}) = 0, x_i = 1, i = 1,\dots,n$
+\item[Minimum] $f(\vec{x}) = 0, x_i = 1, i~= 1,\dots,n$
 \end{description}
 \begin{figure*}[h]
 \centering
@@ -193,11 +199,11 @@ Také nazývána jako Valley function nebo banana function. Má podobu údolí, 
 \end{figure*}
 
 \subsubsection*{Rastrigin}
-Rastriginova funkce vypadá jako nejnáročnější a testy také odhalily, že byla správně vypočítáná v nejméně případech. Obsahuje velké množství lokálních minim, ze kterých už se hejno nemusí dostat.
+Rastriginova funkce vypadá jako nejnáročnější a~testy také odhalily, že byla správně vypočítáná v~nejméně případech. Obsahuje velké množství lokálních minim, ze kterých už se hejno nemusí dostat.
 
 \begin{description}
 \item[Funkční předpis] $f(\vec{x}) = 10n + \sum\limits_{i=1}^n [x_i^2 - 10 cos (2 \pi x_i)]$
-\item[Minimum] $f(\vec{x}) = 0, x_i = 0, i = 1,\dots,n$
+\item[Minimum] $f(\vec{x}) = 0, x_i = 0, i~= 1,\dots,n$
 \end{description}
 
 \begin{figure*}[h]
@@ -206,12 +212,70 @@ Rastriginova funkce vypadá jako nejnáročnější a testy také odhalily, že 
 \caption{2-D funkce rastrigin}
 \end{figure*}
 
-\subsection{Testy}
-\blindtext
+\subsection{Testy} \label{sec:testy}
+Pro testování jsem si vytvořil dva typy testů.
+\begin{description}
+\item{Iteration test} Jeho úkolem je zjistit počet iteracích nutných k~nalezení minima. Proto jsem zvolil pevný počet dimenzí rovný 2, kdy se dá předpokládat největší úspěch. Test vypočte všechny tři optimalizační problémy, každý 20x pro větší věrohodnost výsledků. Jako výstup je procento úspěšných nalezení minima a~průměrný počet iterací pro úspěšné pokusy.
+\item{Dimension test} Tento zkoumá chování algoritmu ve vyšších dimenzích. Vyzkouší každý optimalizační problém pro dimenze od 2 do 10. Jeho výstupem je potom procento úspěchů pro každý problém.
+\end{description}
 
+\subsection{Pokusy} \label{sec:pokusy}
+Všechny pokusy, pokud není řečeno jinak, mají defaultní parametry:
+\begin{verbatim}
+w = 0.7298
+c = 1.49618
+max_iterations = 1000
+dimension = 2
+population = 20 + 2 * dimension
+topology = gbest
+\end{verbatim}
+
+\subsubsection*{Parametr c}
+Jako první proměnnou proměnnou algoritmu jsem zvolil parametr $c$, který nám udává limit náhodného vlivu nejlepší pozice částice a~nejlepší pozice okolí. Pro tento pokus jsem použil Iteration test. Na grafu~(\ref{pic:c-plot}) můžeme pozorovat, že se vzrůstající hodnotou $c$ roste také pravděpodobnost nalezení minima. Zároveň však od hodnoty, která je defaultní, začíná i~exponenciálně růst počet iterací nutných k~nalezení tohoto minima. To si lze vysvětlit tím, že taková hodnota $c$ zvýhodňuje exploataci před explorací (využívání okolí již nalezených potenciálních minim před hledáním nových).
+
+\begin{figure*}[h!]
+\centering
+\includegraphics[width=16cm]{pics/c-plot.eps}
+\caption{Závislost počtu iterací a~úspěchu vyhledávání na parametru c}
+\label{pic:c-plot}
+\end{figure*}
+
+\subsubsection*{Parametr w}
+Parametr $w$ nám udává setrvačnost částice, tedy jakou rychlost si částice přenáší z~minulé iterace. Pro tento pokus byl také použit Iteration test. Graf~(\ref{pic:w-plot}) ukazuje, že literaturou doporučované~\cite{poli2007particle} hodnoty mezi $0.4$ a~$0.9$ jsou opodstatněné. Hodnoty menší dosahují malého úspěchu a~pro hodnotu $1.0$ si můžeme všimnout totálního selhání.
+\begin{figure*}[h!]
+\centering
+\includegraphics[width=16cm]{pics/w-plot.eps}
+\caption{Závislost počtu iterací a~úspěchu vyhledávání na parametru w}
+\label{pic:w-plot}
+\end{figure*}
+
+\subsubsection*{Typ topologie}
+Důležitým parametrem algoritmu PSO je typ vybrané topologie. Zde jsem také použil Iteration test. Na grafu~(\ref{pic:topology-plot}) je rozdělení podle typu topologie, jejich úspěšnost a~počet iterací u~úspěšných pokusů. Mezi vybranými topologiemi jsou \textit{gbest}, \textit{lbestx}, kde x je počet sousedů na každou stranu, a~dynamická topologie \textit{Ixny}, kde x je počet iterací do změny topologie a~y je počet náhodných sousedů každé topologie.
+
+V~tomto testu si můžeme povšimnout, že na mnou vybraných optimalizačních problémech patří topologie \textit{gbest} mezi nejméně úspěšné, avšak stále je to takřka 95 \%. Také si lze povšimnout korelace mezi zvýšením počtu sousedů v~topologii \textit{lbest} a~snižováním počtu iterací na úspěšný pokus. S~podobnými výsledky jako předešlé dvě topologie se může chlubit i~topologie dynamická. Ta dokonce dosahuje ve dvou nastaveních 100 \% úspěšnosti. Otázkou zůstává nakolik je tento výsledek dílem náhody.
+
+\begin{figure*}[h!]
+\centering
+\includegraphics[width=16cm]{pics/topology-plot.eps}
+\caption{Závislost počtu iterací a~úspěchu vyhledávání na typu topologie}
+\label{pic:topology-plot}
+\end{figure*}
+
+\subsubsection*{Velikost populace}
+V~posledním pokusu jsem se snažil ověřit domněnku, že větší populace pomůže algoritmu lépe překonávat lokální minima a~tak dosahovat vyšší šance nalezení výsledku. K~tomuto pokusu se hodil lépe hodil Dimension test, protože podle mého testování má algoritmus ve vyšších dimenzích větší problém s~lokálními optimy.
+
+Na grafu~(\ref{pic:population-plot}) si můžete všimnout, že se zvětšující se populací opravdu roste pravděpodobnost úspěchu, ale samozřejmě také čas potřebný k~dokončení výpočtu. U~populace o~počtu 70 členů lze vypozorovat, že tento čas klesá pokud úspěšnost roste. To je způsobeno tím, že pokud je algoritmus v~lokálním optimu tak neskončí dříve než za 1000 iterací a~tím vlastně plýtvá strojovým časem. Řešením takového problému by například mohlo být restartování algoritmu, pokud se nějaký počet iterací nezlepšuje výsledek nejlepší částice.
+\begin{figure*}[h!]
+\centering
+\includegraphics[width=16cm]{pics/population-plot.eps}
+\caption{Závislost úspěchu vyhledávání a~času na velikosti populace}
+\label{pic:population-plot}
+\end{figure*}
+
+\newpage
 %--------------------------------------------------------------------
 \section{Závěr} \label{zaver}
-\blindtext
+V~této práci byl představen algoritmus Particle Swarm Optimization. Byly popsány jeho základní parametry, topologie a~možné úpravy. Tento algoritmus byl implementován. Použití a~architektura aplikace byla zdokumentována. Pro zobrazení dat při řešení byl napsán skript, který jednotlivé iterace převádí na jejich vizualizaci. Na programu byly provedeny pokusy nad třemi optimalizačními problémy s~využitím dvou různých implementací. Pokusy potvrdili určité domněnky o~chování systému a~zároveň se v~nich projevila vhodnost v~literatuře doporučovaných parametrů.
 
 %\end{multicols}
 \bibliographystyle{czechiso}
@@ -222,6 +286,8 @@ Rastriginova funkce vypadá jako nejnáročnější a testy také odhalily, že 
 \newpage
 \appendix
 \section{Algoritmus PSO} \label{app_algoritmus_pso}
+Formálnější a~obsažnější algoritmus PSO.
+
 \begin{algorithm}
 \caption{Particle Swarm Optimization} 
 \begin{algorithmic}
@@ -242,21 +308,21 @@ Rastriginova funkce vypadá jako nejnáročnější a testy také odhalily, že 
 		\ForAll{$j \in L^k$}
 			\If{$f(\vec{x}^j_{best}) < f(\vec{x}^{L^k}_{best})$}
 				\State{$\vec{x}^{L^k}_{best}:=\vec{x}^j_{best}$}
-				\Comment{Nejlepší poloha z okolí}
+				\Comment{Nejlepší poloha z~okolí}
 			\EndIf
 		\EndFor
 	\EndFor
 	\ForAll{$k \in P$}
 		\If{$f(\vec{x}^{L^k}_{best}) < \vec{x}^k_{best}$}
-			\State{$v^k := \omega \cdot v + U(0,c) \cdot (\vec{x}^k_{best} - \vec{x}^k) + U(0,c) \cdot (\vec{x}^{L^k}_{best} -  \vec{x}^k)$}
+			\State{$v^k := \omega \cdot v~+ U(0,c) \cdot (\vec{x}^k_{best} - \vec{x}^k) + U(0,c) \cdot (\vec{x}^{L^k}_{best} -  \vec{x}^k)$}
 			\Comment(Aktualizujeme rychlost)
 		\EndIf
 		\State($\vec{x}^k := \vec{x} + \vec{v}^k$)
 		\Comment(Aktualizujeme polohu)
-		\State(Pokud částice vystoupí z ohraničeného prostoru, tak ji vrátíme na hranici a vynulujeme rychlost dané dimenze)
+		\State(Pokud částice vystoupí z~ohraničeného prostoru, tak ji vrátíme na hranici a~vynulujeme rychlost dané dimenze)
 		\If{$f(\vec{x}^k) < f(\vec{x}^k_{best})$}
 			\State{$f(\vec{x}^k_{best}) := f(\vec{x}^k)$}
-			\Comment{Aktualizujeme informaci o nejlepší předchozí pozici}
+			\Comment{Aktualizujeme informaci o~nejlepší předchozí pozici}
 		\EndIf
 		\If{$f(\vec{x}^k) < precision$}
 			\State \Return{$\vec{x}^k$}

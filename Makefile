@@ -1,5 +1,5 @@
 CXX=g++
-CXXFLAGS=-g -std=c++11 -Wall -pedantic
+CXXFLAGS=-g -std=c++0x -Wall -pedantic
 BIN=pso
 
 SRC=$(wildcard *.cpp)
@@ -14,3 +14,8 @@ all: $(OBJ)
 clean:
 	rm -f *.o
 	rm $(BIN)
+
+pack:
+	zip xsebek02.zip Makefile MathVector.cpp MathVector.hpp Parameters.cpp \
+	Parameters.hpp Particle.cpp Particle.hpp Pso.cpp Pso.hpp Testbed.cpp \
+	Testbed.hpp main.cpp plot.py report/pso.pdf
