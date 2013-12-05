@@ -145,7 +145,7 @@ Usage: pso [FLAGS]
 -d, --dimension			set dimension of the problem
 -p, --problem			problem to solve: sphere, rosenbrock, rastrigin
 				dimensionTest, iterationTest
--P, --population		number of particles, default 20 + dimension
+-P, --population		number of particles, default 20 + 2 * dimension
 -f, --file			record computing to file, JSON format
 -F, --fips			use Fully Informed Particle Swarm
 -h, --help			show this help
@@ -153,8 +153,10 @@ Usage: pso [FLAGS]
 Topology settings:
 -g, --gbest			use gbest topology
 -l, --lbest			use lbest topology
+-D --dynamic			use dynamic topology
 -I, --dynamic-iterations	change dynamic topology every value iterations
 -n, --dynamic-neighbours	have value neighbours in dynamic topology
+
 \end{verbatim}
 
 \subsection{Kreslení grafů}
