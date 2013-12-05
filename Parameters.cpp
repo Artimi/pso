@@ -39,7 +39,7 @@ void printHelp()
 	<< "Topology settings:" << std::endl
 	<< "-g, --gbest\t\t\tuse gbest topology" << std::endl
 	<< "-l, --lbest\t\t\tuse lbest topology" << std::endl
-    << "-D --dynamic\t\t\tuse dynamic topology"
+    << "-D --dynamic\t\t\tuse dynamic topology" << std::endl
 	<< "-I, --dynamic-iterations\tchange dynamic topology every value iterations" << std::endl
 	<< "-n, --dynamic-neighbours\thave value neighbours in dynamic topology" << std::endl;
 }
