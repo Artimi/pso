@@ -29,7 +29,7 @@
 \maketitle
 
 \section*{Abstrakt}
-Tato práce se zabývá popisem vývoje implementace pro optimalizační stochastickou metody Particle Swarm Optimization (PSO). Popisuje základní algoritmus i~jeho možné varianty. Představuje architekturu programu \texttt{pso} a~jeho základní použití. Tento program je pak podroben experimentům na běžných optimalizačních funkcích.
+Tato práce se zabývá popisem vývoje implementace pro optimalizační stochastickou metodu Particle Swarm Optimization (PSO). Popisuje základní algoritmus i~jeho možné varianty. Představuje architekturu programu \texttt{pso} a~jeho základní použití. Tento program je pak podroben experimentům na běžných optimalizačních funkcích.
 
 %\begin{multicols}{2}
 
@@ -45,7 +45,7 @@ Práce je organizována následujícím způsobem. V~sekci~\ref{algoritmus_pso} 
 %--------------------------------------------------------------------
 \section{Algoritmus PSO} \label{algoritmus_pso}
 %\Blindtext[3][1]
-Idea metody PSO je založena na chování hejna ptáků nebo ryb hledající potravu. Takové hejno se pohybuje v~určitém prostoru a~snaží se dosáhnout určitého předem neznámého místa. Každý jedinec daného hejna se pak pohybuje na základě ostatních jedinců, většinou ne všech, ale těch z~určitého okolí.
+Idea metody PSO je založena na chování hejna ptáků nebo ryb hledající potravu. Takové hejno se pohybuje v~určitém prostoru a~snaží se dosáhnout předem neznámého místa. Každý jedinec daného hejna se pak pohybuje na základě ostatních jedinců, většinou ne všech, ale těch ze svého okolí.
 
 Matematické zjednodušení je potom následující~\footnote{Použitá notace je převzata z~\cite{sfc08}. Některé symboly jsou přidány nebo změněny, aby více odpovídaly použitým variantám.}. Hledáme ve stavovém prostoru o~dimenzi $D \in \mathbb{N}$, kde pro každý rozměr $d \in \{1,\dots,D\}$ jsou stanoveny hodnoty $min_d, max_d \in \mathbb{R}$, které tento prostor efektivně ohraničují. Máme populaci $P$ o~určitém počtu $|P| = m$ částic $k$, kde každá má určenou aktuální polohu $\vec{x}^k \in \mathbb{R}^D$ a~rychlost $\vec{v}^k \in \mathbb{R}^D$. Každá částice si také pamatuje svoji nejlepší polohu $\vec{x}^k_{best} \in \mathbb{R}^D$ a~má také určité okolí $L^k \subseteq P \setminus k$. V~daném okolí můžeme také nalézt nejlepší polohu $\vec{x}^{L^k}_{best} \in \mathbb{R}^D$. A~konečně nejlepší hodnota celého hejna můžeme označit $\vec{x}_{best} \in \mathbb{R}^D$.
 
@@ -85,13 +85,13 @@ Základním parametrem jaký lze nastavit je velikost populace, ta se běžně n
 \subsubsection{Constriction parametr}
 \textit{Constriction} parametr nám dává maximální míru přihlédnutí k~minulé nejlepší poloze částice a~nejlepší poloze částice z~okolí. Po několika experimentech byl představen vzorec pro změnu rychlosti:
 \begin{equation} \label{v-chi}
-v^k :=  \chi \cdot \left( U(0,c_1) \cdot (\vec{x}^k_{best} - \vec{x}^k) + U(0,c_2) \cdot (\vec{x}^{L^k}_{best} -  \vec{x}^k) \right)
+\vec{v}^k :=  \chi \cdot \left(\vec{v}^k + U(0,c_1) \cdot (\vec{x}^k_{best} - \vec{x}^k) + U(0,c_2) \cdot (\vec{x}^{L^k}_{best} -  \vec{x}^k) \right)
 \end{equation}
 kde $c = c_1 + c_2 > 4$
 a~\begin{equation} \label{chi}
 \chi = \frac{2}{c - 2 + \sqrt{c^2 - 4 c}}
 \end{equation}
-Hodnoty $c_1$ a~$c_2$ byly většinou nastavovány shodné na $2.05$, tedy součin $c = 4.1$, z~toho podle~(\ref{chi}) vychází $\chi = 0.7298$ a~člen $(\vec{x}^k_{best} - \vec{x}^k)$ byl tak efektivně násoben náhodnou hodnotou omezenou shora $0.7298 \cdot 2.05 = 1.49618$.
+Hodnoty $c_1$ a~$c_2$ byly většinou nastavovány shodně na $2.05$, tedy součin $c = 4.1$, z~toho podle~(\ref{chi}) vychází $\chi = 0.7298$ a~člen $(\vec{x}^k_{best} - \vec{x}^k)$ byl tak efektivně násoben náhodnou hodnotou omezenou shora $0.7298 \cdot 2.05 = 1.49618$.
 
 Vzorec~(\ref{v-chi}) lze snadno převést na vzorec~(\ref{v-algoritmus}) a~to s~následujícími hodnotami: $w=0.7298$, $c=1.49618$.
 
@@ -114,9 +114,9 @@ Topologie \textit{gbest} (podle global best) je statická topologie, v~jejímž 
 \subsubsection{lbest}
 Další statickou topologií je \textit{lbest} (local best). Tu si lze představit tak, že každá částice má ve svém okolí částice z~populačního pole. To samozřejmě pochází z~implementačního hlediska, kdy jsou částice uloženy v~nějakém sekvenčním kontejneru. Částice potom bude mít ve svém okolí ty částice, které jsou v~tomto kontejneru jejími sousedy. To lze samozřejmě rozšířit na větší poloměr než na nejbližší sousedy. \textit{lbest} topologie je dosahovala lepších výsledků v~prohledávání stavového prostoru než \textit{gbest}.
 \subsubsection{Dynamická topologie}
-Dynamické topologie se na rozdíl od statických topologií mění v~průběhu výpočtu.  Bylo provedeno více experimentů s~různými topologiemi. Jako nejvíce dynamickou lze považovat metodu, kde každá částice změní své okolí každých několik iterací. 
+Dynamické topologie se na rozdíl od statických topologií mění v~průběhu výpočtu.  Bylo provedeno více experimentů s~různými topologiemi. Pro tento projekt byla zvolena varianta, kde každá částice změní své okolí každých několik iterací. 
 
-Dalším příkladem může být rozdělení částic do \textit{kmenů}, kdy jsou všechny v~daném kmenu v~gbest topologii. Ty kmeny s~dobrými výsledky můžou těžit z~odchodu horších částic, zatímco kmeny nemající uspokojivé řešení mohou získat příchodem nového jedince.
+Dalším příkladem může být rozdělení částic do \textit{kmenů}, kdy jsou všechny v~daném kmenu spolu v~topologii. Ty kmeny s~dobrými výsledky můžou těžit z~odchodu horších částic, zatímco kmeny nemající uspokojivé řešení mohou získat příchodem nového jedince.
 
 \newpage
 %--------------------------------------------------------------------
@@ -133,7 +133,7 @@ Zdrojový kód se skládá z~několika tříd. Grafický popis lze nalézt na ob
 \end{figure*}
 
 \subsection{Použití}
-Pro překlad aplikace je třeba použít příkaz \texttt{make}. Pro překlad byl použit program \texttt{gcc} ve verzi 4.8.2.
+Pro překlad aplikace je třeba použít příkaz \texttt{make}. Pro překlad byl použit program \texttt{gcc} ve verzi 4.6 a~vyšší.
 
 Po kompilaci projektu je možno spustit program následujícím způsobem:
 \begin{verbatim}
@@ -156,7 +156,17 @@ Topology settings:
 -D --dynamic			use dynamic topology
 -I, --dynamic-iterations	change dynamic topology every value iterations
 -n, --dynamic-neighbours	have value neighbours in dynamic topology
+\end{verbatim}
 
+Tedy například:
+
+\begin{verbatim}
+$ ./pso --problem sphere --lbest 2 --file sphere.json --dimension 4
+sphere:
+Success: 1
+iterations: 203
+Best x: [ -4.78121e-06 -3.89934e-06 4.67562e-06 5.73368e-07 ]
+Best x fitness: 6.0255e-11
 \end{verbatim}
 
 \subsection{Kreslení grafů}
@@ -171,10 +181,10 @@ Pro vizualizaci hledání minima jsem napsal skript v~Pythonu, který vygeneruje
 \newpage
 %--------------------------------------------------------------------
 \section{Experimenty} \label{experimenty}
-Výslednou aplikaci jsem se rozhodl otestovat na optimalizačních problémech popsaných v~následující podkapitole~(\ref{sec:optimalizacni-problemy}). Pro věrohodnější výsledky jsem vytvořil dva typy testů, ty popisuji v~kapitole~(\ref{sec:testy}). Na těchto testech jsem potom nechal běžet PSO s~různými parametry, výsledky jsou zobrazeny v~kapitole~(\ref{sec:pokusy}).
+Výslednou aplikaci jsem se rozhodl otestovat na optimalizačních problémech popsaných v~následující podkapitole~(\ref{sec:optimalizacni-problemy}). Pro věrohodné  výsledky jsem vytvořil dva typy testů, ty popisuji v~kapitole~(\ref{sec:testy}). Na těchto testech jsem potom nechal běžet PSO s~různými parametry, výsledky jsou zobrazeny v~kapitole~(\ref{sec:pokusy}).
 
 \subsection{Optimalizační problémy} \label{sec:optimalizacni-problemy}
-Pro testování schopnosti nalézt minimum jsem vybral tři známé optimalizační funkce. Čerpal jsem z~\cite{molga2005test}. Všechny tři funkce mají pouze jedno minimum a~to je rovno 0.0. Všechny funkce jsou zadány pro libovolný počet $n$ dimenzí problému.
+Pro testování schopnosti nalézt minimum jsem vybral tři známé optimalizační funkce. Čerpal jsem z~\cite{molga2005test}. Všechny tři funkce mají pouze jedno minimum a~to je rovno $0.0$. Všechny funkce jsou zadány pro libovolný počet $n$ dimenzí problému.
 
 \subsubsection*{Sphere}
 Funkce sphere je nejjednodušší optimalizační problém a~slouží jen pro ověření nejzákladnější správnosti algoritmu.
@@ -233,7 +243,7 @@ topology = gbest
 \end{verbatim}
 
 \subsubsection*{Parametr c}
-Jako první proměnnou proměnnou algoritmu jsem zvolil parametr $c$, který nám udává limit náhodného vlivu nejlepší pozice částice a~nejlepší pozice okolí. Pro tento pokus jsem použil Iteration test. Na grafu~(\ref{pic:c-plot}) můžeme pozorovat, že se vzrůstající hodnotou $c$ roste také pravděpodobnost nalezení minima. Zároveň však od hodnoty, která je defaultní, začíná i~exponenciálně růst počet iterací nutných k~nalezení tohoto minima. To si lze vysvětlit tím, že taková hodnota $c$ zvýhodňuje exploataci před explorací (využívání okolí již nalezených potenciálních minim před hledáním nových).
+Jako první proměnnou proměnnou algoritmu jsem zvolil parametr $c$, který nám udává limit náhodného vlivu nejlepší pozice částice a~nejlepší pozice okolí. Pro tento pokus jsem použil Iteration test. Na grafu~(\ref{pic:c-plot}) můžeme pozorovat, že se vzrůstající hodnotou $c$ roste také pravděpodobnost nalezení minima. Zároveň však od hodnoty 1.5, která je defaultní, začíná i~exponenciálně růst počet iterací nutných k~nalezení tohoto minima. To si lze vysvětlit tím, že taková hodnota $c$ zvýhodňuje exploataci před explorací (využívání okolí již nalezených potenciálních minim před hledáním nových).
 
 \begin{figure*}[h!]
 \centering
@@ -295,6 +305,7 @@ Formálnější a~obsažnější algoritmus PSO.
 \begin{algorithmic}
 \Require{fitness funkce $f$, $\forall d \in \{1,\dots,D\}: min_d, max_d$, }
 \Ensure{$\vec{x}_{best}: f(\vec{x}_{best}) \leq precision$}
+\State{$i:= 0$}
 \ForAll{$k \in P$}
 \Comment{Inicializace}
 	\State{$\forall d \in \{1,\dots,D\}: (\vec{x}^k)_d := U(min_d, max_d)$}
@@ -304,7 +315,7 @@ Formálnější a~obsažnější algoritmus PSO.
 	\State{$\vec{x}^k_{best} := \vec{x}^k$}
 	\State{Přiřadíme částice do okolí $L^k$}
 \EndFor
-\While{podmínka ukončení}
+\While{$f(\vec{x}^k_{best})> precision\; \&\&\; i < maxiteration$}
 	\ForAll{$k \in P$}
 		\State{$\vec{x}^{L^k}_{best} = \infty$}
 		\ForAll{$j \in L^k$}
@@ -317,17 +328,24 @@ Formálnější a~obsažnější algoritmus PSO.
 	\ForAll{$k \in P$}
 		\If{$f(\vec{x}^{L^k}_{best}) < \vec{x}^k_{best}$}
 			\State{$v^k := \omega \cdot v~+ U(0,c) \cdot (\vec{x}^k_{best} - \vec{x}^k) + U(0,c) \cdot (\vec{x}^{L^k}_{best} -  \vec{x}^k)$}
-			\Comment(Aktualizujeme rychlost)
+			\Comment{Aktualizujeme rychlost}
 		\EndIf
-		\State($\vec{x}^k := \vec{x} + \vec{v}^k$)
-		\Comment(Aktualizujeme polohu)
-		\State(Pokud částice vystoupí z~ohraničeného prostoru, tak ji vrátíme na hranici a~vynulujeme rychlost dané dimenze)
+		\State{$\vec{x}^k := \vec{x} + \vec{v}^k$}
+		\Comment{Aktualizujeme polohu}
+		\ForAll{$d \in \{1,\dots,D\}$}
+		\Comment{Zabráníme částici opustit vymezený prostor}
+			\If{$(\vec{x}^k)_d < min_d$}
+				\State{$(\vec{x}^k)_d = min_d$}
+				\State{$(\vec{v}^k)_d = 0$}
+			\EndIf
+			\If{$(\vec{x}^k)_d > max_d$}
+				\State{$(\vec{x}^k)_d = max_d$}
+				\State{$(\vec{v}^k)_d = 0$}				
+			\EndIf
+		\EndFor
 		\If{$f(\vec{x}^k) < f(\vec{x}^k_{best})$}
 			\State{$f(\vec{x}^k_{best}) := f(\vec{x}^k)$}
 			\Comment{Aktualizujeme informaci o~nejlepší předchozí pozici}
-		\EndIf
-		\If{$f(\vec{x}^k) < precision$}
-			\State \Return{$\vec{x}^k$}
 		\EndIf
 	\EndFor
 \EndWhile
