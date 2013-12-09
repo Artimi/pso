@@ -18,4 +18,4 @@ clean:
 pack:
 	zip xsebek02.zip Makefile MathVector.cpp MathVector.hpp Parameters.cpp \
 	Parameters.hpp Particle.cpp Particle.hpp Pso.cpp Pso.hpp Testbed.cpp \
-	Testbed.hpp main.cpp plot.py report/pso.pdf
+	Testbed.hpp main.cpp plot.py report/pso.pdf pso
